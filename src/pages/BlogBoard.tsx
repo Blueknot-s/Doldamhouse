@@ -1,46 +1,104 @@
 import React from 'react';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import About from './pages/About';
+import Projects from './pages/Projects';
+import Gallery from './pages/Gallery';
+import News from './pages/News';
+import Contact from './pages/Contact';
+import Support from './pages/Support';
+import CountryHouse from './pages/CountryHouse';
+import StoneWall from './pages/StoneWall';
+import BlogBoard from './pages/BlogBoard';
 
-// 테스트를 위한 가짜 데이터 (데이터가 없어서 안 보이는 현상 방지)
-const DUMMY_DATA = [
-  {
-    id: 'test-1',
-    title: '티스토리 연동 테스트 포스팅',
-    content: 'n8n과 파이어베이스를 통해 들어올 데이터가 이 자리에 표시됩니다.',
-    pubDate: new Date().toLocaleDateString(),
-    category: '블로그'
+// Admin & Login
+import Login from './pages/Login';
+import Admin from './pages/Admin';
+
+// Detail Pages
+import NewsDetail from './pages/NewsDetail';
+import ProjectDetail from './pages/ProjectDetail';
+
+// ─── Error Boundary ────────────────────────────────────────────
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
   }
-];
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('ErrorBoundary caught:', error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#333' }}>
+          <h2>페이지를 불러오는 중 오류가 발생했습니다.</h2>
+          <p style={{ color: '#999', fontSize: '0.8rem' }}>{this.state.error?.message}</p>
+          <button
+            onClick={() => this.setState({ hasError: false, error: null })}
+            style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer' }}
+          >
+            다시 시도
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
-const BlogBoard: React.FC = () => {
+// Scroll to top component
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
+const App: React.FC = () => {
   return (
-    <div className="max-w-6xl mx-auto py-20 px-4 min-h-screen">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-doldam-dark">돌담하우스 뉴스 & 블로그</h1>
-        <p className="text-gray-500 mt-4">새로운 소식을 확인하세요.</p>
+    <Router>
+      <ScrollToTop />
+      <div className="flex flex-col min-h-screen font-sans text-doldam-dark antialiased selection:bg-doldam-accent selection:text-white">
+        <Navigation />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/country-house" element={<CountryHouse />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/stone-wall" element={<StoneWall />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            
+            {/* 🛠️ [핵심 수정] 모든 형태의 blog 경로를 BlogBoard로 연결합니다 */}
+            <Route path="/blog" element={<BlogBoard />} />
+            <Route path="blog" element={<BlogBoard />} />
+            
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
+            
+            {/* 🛠️ 정의되지 않은 경로는 홈으로 보내 404 에러를 방지합니다 */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+        <Footer />
       </div>
-      
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {DUMMY_DATA.map((post) => (
-          <div key={post.id} className="bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
-            <div className="p-6">
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-600 mb-4">
-                {post.category}
-              </span>
-              <h2 className="text-2xl font-bold mb-3 text-gray-800">{post.title}</h2>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                {post.content}
-              </p>
-              <div className="flex justify-between items-center text-sm text-gray-400 border-t pt-4">
-                <span>{post.pubDate}</span>
-                <span className="text-doldam-accent font-medium cursor-pointer">더 보기 →</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    </Router>
   );
 };
 
-// [중요] 반드시 export default가 있어야 App.tsx에서 불러올 수 있습니다.
-export default BlogBoard;
+export default App;
