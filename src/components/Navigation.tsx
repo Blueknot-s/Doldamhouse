@@ -14,6 +14,7 @@ const Navigation: React.FC = () => {
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null);
   const location = useLocation();
 
+  // 스크롤 감지 및 배경 전환
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -22,6 +23,7 @@ const Navigation: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 모바일 메뉴 열림/닫힘 시 바디 스크롤 제어
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -33,16 +35,17 @@ const Navigation: React.FC = () => {
     };
   }, [isOpen]);
 
+  // 페이지 이동 시 메뉴 닫기
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
-  // [수정 포인트] Blog 삭제 및 Projects 경로 명확화
+  // [수정 포인트] Blog 메뉴 삭제 및 Projects 통합 게시판 경로(/projects) 활성화
   const navLinks: NavItem[] = [
     { name: 'About', path: '/about' },
     { 
       name: 'Projects', 
-      path: '/projects', // 티스토리 '시공현장' 글들이 모일 통합 게시판 주소
+      path: '/projects', // 티스토리 '시공현장' 글이 노출될 메인 게시판
       children: [
         { name: '전원주택', path: '/country-house' },
         { name: '농촌주택개량', path: '/support' },
@@ -51,11 +54,12 @@ const Navigation: React.FC = () => {
       ]
     },
     { name: 'Gallery', path: '/gallery' },
-    { name: 'News', path: '/news' }, // 티스토리 '제주뉴스' 글들이 모일 주소
+    { name: 'News', path: '/news' }, // 티스토리 '제주뉴스' 글이 노출될 뉴스 게시판
   ];
 
   const isHome = location.pathname === '/';
 
+  // 현재 경로 활성화 표시 함수
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
@@ -77,12 +81,14 @@ const Navigation: React.FC = () => {
         }`}
       >
         <div className="container mx-auto px-6 flex items-center justify-between">
+          {/* Logo */}
           <Link to="/" className="text-2xl font-black tracking-tighter flex items-center group relative z-[310]">
             <span className="transition-transform group-hover:text-doldam-accent duration-300">Doldam</span>
             <span className="text-doldam-accent mx-0.5">.</span>
             <span className="transition-transform group-hover:text-doldam-accent duration-300">House</span>
           </Link>
 
+          {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-12">
             {navLinks.map((link) => (
               <div key={link.name} className="relative group h-full flex items-center">
@@ -123,6 +129,7 @@ const Navigation: React.FC = () => {
             </Link>
           </div>
 
+          {/* Mobile Toggle Button */}
           <button 
             className="lg:hidden p-2 relative z-[310] transition-colors" 
             onClick={() => setIsOpen(!isOpen)}
@@ -133,6 +140,7 @@ const Navigation: React.FC = () => {
         </div>
       </nav>
 
+      {/* Mobile Menu Overlay */}
       <div 
         className={`fixed inset-0 bg-white text-black z-[250] flex flex-col transition-all duration-500 ease-in-out lg:hidden ${
           isOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'
