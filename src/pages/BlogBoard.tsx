@@ -1,42 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-// 테스트용 가짜 데이터
+// 테스트를 위한 가짜 데이터 (데이터가 없어서 안 보이는 현상 방지)
 const DUMMY_DATA = [
   {
     id: 'test-1',
-    title: '테스트 포스팅입니다',
-    content: '화면이 정상적으로 보인다면 이 문구가 출력됩니다.',
-    pubDate: new Date().toISOString(),
-    category: '테스트'
+    title: '티스토리 연동 테스트 포스팅',
+    content: 'n8n과 파이어베이스를 통해 들어올 데이터가 이 자리에 표시됩니다.',
+    pubDate: new Date().toLocaleDateString(),
+    category: '블로그'
   }
 ];
 
 const BlogBoard: React.FC = () => {
-  const [posts, setPosts] = useState<any[]>(DUMMY_DATA); // 초기값을 가짜 데이터로 설정
-  const [loading, setLoading] = useState(false); // 테스트를 위해 로딩은 꺼둡니다.
-
   return (
-    <div className="max-w-6xl mx-auto py-20 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-center">돌담하우스 블로그 테스트</h1>
+    <div className="max-w-6xl mx-auto py-20 px-4 min-h-screen">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-doldam-dark">돌담하우스 뉴스 & 블로그</h1>
+        <p className="text-gray-500 mt-4">새로운 소식을 확인하세요.</p>
+      </div>
       
-      {posts.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <div key={post.id} className="border p-5 rounded-lg shadow-lg bg-white">
-              <span className="text-orange-500 font-bold">{post.category}</span>
-              <h2 className="text-xl font-bold mt-2">{post.title}</h2>
-              <p className="text-gray-600 mt-2">{post.content}</p>
-              <div className="text-gray-400 text-sm mt-4">{post.pubDate}</div>
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {DUMMY_DATA.map((post) => (
+          <div key={post.id} className="bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+            <div className="p-6">
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-600 mb-4">
+                {post.category}
+              </span>
+              <h2 className="text-2xl font-bold mb-3 text-gray-800">{post.title}</h2>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                {post.content}
+              </p>
+              <div className="flex justify-between items-center text-sm text-gray-400 border-t pt-4">
+                <span>{post.pubDate}</span>
+                <span className="text-doldam-accent font-medium cursor-pointer">더 보기 →</span>
+              </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-20">
-          <p className="text-xl text-gray-500">표시할 게시글이 없습니다.</p>
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
+// [중요] 반드시 export default가 있어야 App.tsx에서 불러올 수 있습니다.
 export default BlogBoard;
