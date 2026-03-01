@@ -55,6 +55,7 @@ const Navigation: React.FC = () => {
     },
     { name: 'Gallery', path: '/gallery' },
     { name: 'News', path: '/news' },
+    { name: 'Blog', path: '/blog' },
   ];
 
   const isHome = location.pathname === '/';
