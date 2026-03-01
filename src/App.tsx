@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-// [수정] 모든 import 경로에 .tsx 확장자를 붙여 경로를 명확히 합니다.
+// [수정] 모든 import 경로에 .tsx를 명시하여 Vercel의 경로 탐색 오류를 방지합니다.
 import Navigation from './components/Navigation.tsx';
 import Footer from './components/Footer.tsx';
 import Home from './pages/Home.tsx';
@@ -19,12 +19,23 @@ import Admin from './pages/Admin.tsx';
 import NewsDetail from './pages/NewsDetail.tsx';
 import ProjectDetail from './pages/ProjectDetail.tsx';
 
+// ─── Error Boundary ────────────────────────────────────────────
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  render() {
+    if (this.state.hasError) return <div className="p-8 text-center"><h2>오류가 발생했습니다.</h2></div>;
+    return this.props.children;
+  }
+}
+
 // Scroll to top component
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+  React.useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 };
 
@@ -32,7 +43,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen font-sans text-doldam-dark antialiased">
         <Navigation />
         <main className="flex-grow">
           <Routes>
@@ -48,8 +59,8 @@ const App: React.FC = () => {
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<Admin />} />
-            {/* BlogBoard 관련 코드는 로그에서 에러의 주범이므로 제거 상태를 유지합니다. */}
+            <Route path="/admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
+            {/* Blog 관련 모든 호출이 제거되었습니다. */}
             <Route path="*" element={<Home />} />
           </Routes>
         </main>
