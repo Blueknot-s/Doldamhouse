@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp, getDocs, doc, deleteDoc, updateDoc, query, orderBy } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db, storage } from "../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ProjectCategory, NewsCategory } from '../types';
-import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, Eye, Edit2, X } from 'lucide-react';
+import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, Eye, Edit2, X, UploadCloud } from 'lucide-react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize-module-react';
+import { useDropzone } from 'react-dropzone';
 
 // Register ImageResize module
 Quill.register('modules/imageResize', ImageResize);
@@ -130,21 +131,22 @@ const Admin: React.FC = () => {
     }
   };
 
+  // react-dropzone implementation
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    handleGalleryUpload(acceptedFiles);
+  }, [activeTab, formData.images]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+    }
+  });
+
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       handleGalleryUpload(Array.from(e.target.files));
     }
-  };
-
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (e.dataTransfer.files) {
-      handleGalleryUpload(Array.from(e.dataTransfer.files));
-    }
-  };
-
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
   };
 
 
@@ -506,32 +508,33 @@ const Admin: React.FC = () => {
               <div className="space-y-3 mb-10">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><ImageIcon size={12} /> Images (이미지 업로드 - 드래그 앤 드롭 지원)</label>
 
-                {/* Drag and Drop Zone */}
+                {/* Enhanced Dropzone with react-dropzone */}
                 <div
-                  onDrop={onDrop}
-                  onDragOver={onDragOver}
-                  className="w-full p-12 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50 hover:bg-white hover:border-doldam-accent transition-all flex flex-col items-center justify-center cursor-pointer group relative overflow-hidden"
-                  onClick={() => document.getElementById('fileInput')?.click()}
+                  {...getRootProps()}
+                  className={`w-full p-12 border-2 border-dashed rounded-sm transition-all flex flex-col items-center justify-center cursor-pointer group relative overflow-hidden ${isDragActive ? 'border-doldam-accent bg-doldam-accent/5 ring-4 ring-doldam-accent/10' : 'border-gray-200 bg-gray-50 hover:bg-white hover:border-doldam-accent'
+                    }`}
                 >
                   {loading && (
-                    <div className="absolute inset-0 bg-white/80 z-10 flex items-center justify-center flex-col">
+                    <div className="absolute inset-0 bg-white/80 z-20 flex items-center justify-center flex-col">
                       <div className="w-8 h-8 border-4 border-doldam-accent border-t-transparent rounded-full animate-spin mb-4"></div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-doldam-dark">Uploading Images...</p>
                     </div>
                   )}
-                  <ImageIcon size={48} className="text-gray-300 group-hover:text-doldam-accent mb-4 transition-colors" />
-                  <p className="text-sm font-black text-gray-500 group-hover:text-doldam-dark text-center">
-                    이미지를 여기로 드래그하거나 클릭하여 선택하세요 (다중 선택 가능)
-                  </p>
-                  <p className="text-[10px] text-gray-400 mt-3 uppercase tracking-[0.2em] font-bold">Max 5MB per image • JPG, PNG, WEBP</p>
-                  <input
-                    id="fileInput"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={onFileChange}
-                    className="hidden"
-                  />
+
+                  <input {...getInputProps()} id="fileInput" />
+
+                  <div className="flex flex-col items-center pointer-events-none">
+                    {isDragActive ? (
+                      <UploadCloud size={48} className="text-doldam-accent mb-4 animate-bounce" />
+                    ) : (
+                      <ImageIcon size={48} className="text-gray-300 group-hover:text-doldam-accent mb-4 transition-colors" />
+                    )}
+
+                    <p className="text-sm font-black text-gray-500 group-hover:text-doldam-dark text-center">
+                      {isDragActive ? "이미지를 여기에 놓으세요" : "이미지를 드래그하거나 클릭하여 선택하세요 (다중 선택)"}
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-3 uppercase tracking-[0.2em] font-bold">Max 5MB per image • JPG, PNG, WEBP</p>
+                  </div>
                 </div>
 
                 {/* Image Previews */}

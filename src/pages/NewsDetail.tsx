@@ -109,9 +109,12 @@ const NewsDetail: React.FC = () => {
           </div>
         )}
 
-        {/* 본문 텍스트 */}
+        {/* 본문 텍스트 - 티스토리 HTML 대응 최적화 */}
         <article className="prose prose-lg max-w-none text-gray-700 leading-relaxed font-light">
-          <div dangerouslySetInnerHTML={{ __html: news.description || news.content || news.summary }} />
+          <div
+            className="tistory-content"
+            dangerouslySetInnerHTML={{ __html: news.description || news.content || news.summary }}
+          />
         </article>
 
         {/* 하단 푸터 라인 */}
