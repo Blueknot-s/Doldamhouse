@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { collection, query, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase/config";
 import { useNavigate } from 'react-router-dom';
 
 const ProjectMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<any>(null);
-  
+
   // 마커와 클러스터러를 관리하기 위한 Ref
   const markersRef = useRef<any[]>([]);
   const clustererRef = useRef<any>(null);
-  
+
   const navigate = useNavigate();
 
   // 1. 구글 맵 초기화 (최초 1회)
@@ -31,16 +31,16 @@ const ProjectMap: React.FC = () => {
       streetViewControl: false,
       mapTypeControl: false,
       styles: [
-          {
-            "featureType": "all",
-            "elementType": "geometry",
-            "stylers": [{ "color": "#f5f5f5" }]
-          },
-          {
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [{ "color": "#c9c9c9" }]
-          }
+        {
+          "featureType": "all",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#f5f5f5" }]
+        },
+        {
+          "featureType": "water",
+          "elementType": "geometry",
+          "stylers": [{ "color": "#c9c9c9" }]
+        }
       ]
     });
 
@@ -53,7 +53,7 @@ const ProjectMap: React.FC = () => {
 
     // projects 컬렉션 구독
     const q = query(collection(db, "projects"));
-    
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
       // 기존 마커 및 클러스터 제거
       if (clustererRef.current) {
@@ -74,13 +74,13 @@ const ProjectMap: React.FC = () => {
           map: mapInstance,
           title: project.title,
           icon: {
-             path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
-             fillColor: "#E85C41",
-             fillOpacity: 1,
-             strokeWeight: 1,
-             strokeColor: "#FFFFFF",
-             scale: 2,
-             anchor: new (window as any).google.maps.Point(12, 22),
+            path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z",
+            fillColor: "#E85C41",
+            fillOpacity: 1,
+            strokeWeight: 1,
+            strokeColor: "#FFFFFF",
+            scale: 2,
+            anchor: new (window as any).google.maps.Point(12, 22),
           }
         });
 
@@ -115,12 +115,12 @@ const ProjectMap: React.FC = () => {
 
         // InfoWindow 내부 버튼 클릭 이벤트 처리
         (window as any).google.maps.event.addListener(infoWindow, 'domready', () => {
-           const btn = document.getElementById(`btn-${project.id}`);
-           if (btn) {
-             btn.addEventListener("click", () => {
-                navigate(`/projects/${project.id}`);
-             });
-           }
+          const btn = document.getElementById(`btn-${project.id}`);
+          if (btn) {
+            btn.addEventListener("click", () => {
+              navigate(`/projects/${project.id}`);
+            });
+          }
         });
 
         return marker;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase/config";
 import { NewsCategory } from '../types';
 import { ChevronRight, Calendar } from 'lucide-react';
 
@@ -47,11 +47,10 @@ const News: React.FC = () => {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-8 py-5 text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap border-b-2 transition-all ${
-                activeCategory === cat 
-                ? 'border-black text-black' 
-                : 'border-transparent text-gray-300 hover:text-gray-600'
-              }`}
+              className={`px-8 py-5 text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap border-b-2 transition-all ${activeCategory === cat
+                  ? 'border-black text-black'
+                  : 'border-transparent text-gray-300 hover:text-gray-600'
+                }`}
             >
               {cat}
             </button>
@@ -63,13 +62,13 @@ const News: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {filteredNews.map((item) => (
-              <Link 
-                to={`/news/${item.id}`} 
-                key={item.id} 
+              <Link
+                to={`/news/${item.id}`}
+                key={item.id}
                 className="group block p-10 border border-gray-50 hover:border-gray-200 hover:shadow-2xl transition-all duration-500 bg-white relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-full -mr-16 -mt-16 group-hover:bg-doldam-accent/5 transition-colors duration-500" />
-                
+
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 relative z-10">
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-6">
@@ -80,11 +79,11 @@ const News: React.FC = () => {
                         <Calendar size={12} className="mr-2" /> {item.date}
                       </div>
                     </div>
-                    
+
                     <h3 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-doldam-accent transition-colors tracking-tighter leading-tight">
                       {item.title}
                     </h3>
-                    
+
                     <p className="text-gray-500 line-clamp-2 leading-relaxed font-light text-base md:text-lg">
                       {item.description || item.content || item.summary}
                     </p>
@@ -92,10 +91,10 @@ const News: React.FC = () => {
 
                   {(item.images?.[0] || item.imageUrl) && (
                     <div className="w-full md:w-48 aspect-video md:aspect-square overflow-hidden bg-gray-100 grayscale group-hover:grayscale-0 transition-all duration-700">
-                      <img 
-                        src={item.images?.[0] || item.imageUrl} 
-                        alt="News Thumb" 
-                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" 
+                      <img
+                        src={item.images?.[0] || item.imageUrl}
+                        alt="News Thumb"
+                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                       />
                     </div>
                   )}
@@ -108,7 +107,7 @@ const News: React.FC = () => {
                 </div>
               </Link>
             ))}
-            
+
             {!loading && filteredNews.length === 0 && (
               <div className="py-32 text-center text-gray-300 bg-gray-50 rounded-lg border-2 border-dashed border-gray-100">
                 <p className="text-sm font-bold uppercase tracking-widest">등록된 소식이 없습니다.</p>

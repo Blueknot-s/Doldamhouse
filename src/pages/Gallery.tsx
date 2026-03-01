@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase/config";
 import { ImageIcon } from 'lucide-react';
 
 const Gallery: React.FC = () => {
@@ -11,7 +11,7 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     // gallery 컬렉션에서 최신순으로 가져옴
     const q = query(collection(db, "gallery"), orderBy("createdAt", "desc"));
-    
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const galleryData: any[] = [];
       querySnapshot.forEach((doc) => {
@@ -35,7 +35,7 @@ const Gallery: React.FC = () => {
             제주의 자연과 함께하는 돌담하우스의 현장 기록입니다.
           </p>
         </div>
-        
+
         {loading ? (
           <div className="py-20 text-center text-gray-400 font-bold tracking-widest">사진을 불러오는 중...</div>
         ) : (
@@ -44,12 +44,12 @@ const Gallery: React.FC = () => {
               images.map((img) => (
                 <div key={img.id} className="break-inside-avoid group relative overflow-hidden bg-gray-50 shadow-sm hover:shadow-2xl transition-all duration-500">
                   {/* 다중 이미지 배열(images) 또는 단일 이미지(imageUrl) 대응 */}
-                  <img 
-                    src={img.images?.[0] || img.imageUrl || "https://picsum.photos/seed/doldam/800/1000"} 
+                  <img
+                    src={img.images?.[0] || img.imageUrl || "https://picsum.photos/seed/doldam/800/1000"}
                     alt={img.title}
                     className="w-full h-auto object-cover grayscale hover:grayscale-0 transition-all duration-1000 transform group-hover:scale-105"
                   />
-                  
+
                   {/* 호버 시 제목 표시 효과 */}
                   <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
                     <p className="text-white text-lg font-bold tracking-[0.2em] uppercase mb-2">{img.title}</p>

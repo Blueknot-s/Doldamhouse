@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 // Use named import instead of namespace import to resolve 'initializeApp' property errors
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";

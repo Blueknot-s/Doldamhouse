@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase"; //
+import { db } from "../firebase/config"; //
 import { ArrowLeft, Calendar, ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 
 const NewsDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); 
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [news, setNews] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -73,12 +73,12 @@ const NewsDetail: React.FC = () => {
         {images.length > 0 && (
           <div className="mb-16 space-y-4">
             <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-50 group shadow-lg">
-              <img 
-                src={images[currentImgIndex]} 
-                alt={`News Visual ${currentImgIndex}`} 
-                className="w-full h-full object-cover transition-opacity duration-700" 
+              <img
+                src={images[currentImgIndex]}
+                alt={`News Visual ${currentImgIndex}`}
+                className="w-full h-full object-cover transition-opacity duration-700"
               />
-              
+
               {images.length > 1 && (
                 <div className="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button onClick={prevImage} className="bg-black/50 text-white p-2 rounded-full hover:bg-black transition-all">
@@ -90,17 +90,16 @@ const NewsDetail: React.FC = () => {
                 </div>
               )}
             </div>
-            
+
             {/* 썸네일 네비게이션 */}
             {images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
                 {images.map((img: string, idx: number) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     onClick={() => setCurrentImgIndex(idx)}
-                    className={`shrink-0 w-24 aspect-video cursor-pointer border-2 transition-all ${
-                      currentImgIndex === idx ? 'border-doldam-accent' : 'border-transparent opacity-40 hover:opacity-100'
-                    }`}
+                    className={`shrink-0 w-24 aspect-video cursor-pointer border-2 transition-all ${currentImgIndex === idx ? 'border-doldam-accent' : 'border-transparent opacity-40 hover:opacity-100'
+                      }`}
                   >
                     <img src={img} alt="thumb" className="w-full h-full object-cover" />
                   </div>

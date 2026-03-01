@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { ProjectCategory } from '../types';
 import { Filter, ArrowRight } from 'lucide-react';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase/config";
 
 const Projects: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,8 +38,8 @@ const Projects: React.FC = () => {
     setSearchParams({ category });
   };
 
-  const filteredProjects = activeCategory === 'All' 
-    ? realProjects 
+  const filteredProjects = activeCategory === 'All'
+    ? realProjects
     : realProjects.filter(p => p.category === activeCategory);
 
   const categories = ['All', ...Object.values(ProjectCategory)];
@@ -60,11 +60,10 @@ const Projects: React.FC = () => {
             <button
               key={cat}
               onClick={() => handleCategoryChange(cat)}
-              className={`text-xs md:text-sm px-6 py-2.5 rounded-full transition-all duration-300 font-bold uppercase tracking-widest ${
-                activeCategory === cat 
-                  ? 'bg-black text-white shadow-lg' 
+              className={`text-xs md:text-sm px-6 py-2.5 rounded-full transition-all duration-300 font-bold uppercase tracking-widest ${activeCategory === cat
+                  ? 'bg-black text-white shadow-lg'
                   : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -78,9 +77,9 @@ const Projects: React.FC = () => {
             {filteredProjects.map((project) => (
               <Link to={`/projects/${project.id}`} key={project.id} className="group flex flex-col cursor-pointer">
                 <div className="w-full aspect-[16/10] overflow-hidden bg-gray-100 mb-8 relative">
-                  <img 
-                    src={(project.images && project.images[0]) || project.imageUrl || "https://picsum.photos/seed/doldam/1200/800"} 
-                    alt={project.title} 
+                  <img
+                    src={(project.images && project.images[0]) || project.imageUrl || "https://picsum.photos/seed/doldam/1200/800"}
+                    alt={project.title}
                     className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
@@ -90,28 +89,28 @@ const Projects: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-between items-start px-2">
                   <div className="flex-grow">
-                     <span className="text-doldam-accent text-[10px] font-bold uppercase tracking-[0.2em] mb-3 block">
-                        {project.category}
-                     </span>
-                     <h3 className="text-3xl font-bold mb-4 tracking-tighter group-hover:text-gray-600 transition-colors">
-                        {project.title}
-                     </h3>
-                     <p className="text-gray-500 text-base leading-relaxed mb-6 line-clamp-2 font-light">
-                        {project.description}
-                     </p>
+                    <span className="text-doldam-accent text-[10px] font-bold uppercase tracking-[0.2em] mb-3 block">
+                      {project.category}
+                    </span>
+                    <h3 className="text-3xl font-bold mb-4 tracking-tighter group-hover:text-gray-600 transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-500 text-base leading-relaxed mb-6 line-clamp-2 font-light">
+                      {project.description}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="mt-auto border-t border-gray-100 pt-6 flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest px-2">
-                    <div className="flex gap-4">
-                      {project.specs && <span>{project.specs}</span>}
-                      {project.specs && <span>|</span>}
-                      <span>{project.location}</span>
-                    </div>
-                    <span className="text-black">{project.date || '2026.02'}</span>
+                  <div className="flex gap-4">
+                    {project.specs && <span>{project.specs}</span>}
+                    {project.specs && <span>|</span>}
+                    <span>{project.location}</span>
+                  </div>
+                  <span className="text-black">{project.date || '2026.02'}</span>
                 </div>
               </Link>
             ))}
@@ -119,10 +118,10 @@ const Projects: React.FC = () => {
         )}
 
         {!loading && filteredProjects.length === 0 && (
-            <div className="text-center py-32 text-gray-400 bg-gray-50 rounded-lg border-2 border-dashed border-gray-100">
-                <Filter className="mx-auto w-12 h-12 mb-4 opacity-20"/>
-                <p className="text-sm font-bold uppercase tracking-widest">No Projects Found</p>
-            </div>
+          <div className="text-center py-32 text-gray-400 bg-gray-50 rounded-lg border-2 border-dashed border-gray-100">
+            <Filter className="mx-auto w-12 h-12 mb-4 opacity-20" />
+            <p className="text-sm font-bold uppercase tracking-widest">No Projects Found</p>
+          </div>
         )}
       </div>
     </div>
