@@ -1,104 +1,37 @@
-import React from 'react';
-import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import Navigation from './components/Navigation';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
-import Projects from './pages/Projects';
-import Gallery from './pages/Gallery';
-import News from './pages/News';
-import Contact from './pages/Contact';
-import Support from './pages/Support';
-import CountryHouse from './pages/CountryHouse';
-import StoneWall from './pages/StoneWall';
-import BlogBoard from './pages/BlogBoard';
+import React, { useEffect } from 'react';
 
-// Admin & Login
-import Login from './pages/Login';
-import Admin from './pages/Admin';
+const BlogBoard: React.FC = () => {
+  useEffect(() => {
+    // 이 로그가 콘솔에 찍히는지 확인하는 것이 핵심입니다.
+    console.log("✅ BlogBoard 컴포넌트가 정상적으로 로드되었습니다!");
+    console.log("현재 URL 경로:", window.location.hash || window.location.pathname);
+  }, []);
 
-// Detail Pages
-import NewsDetail from './pages/NewsDetail';
-import ProjectDetail from './pages/ProjectDetail';
-
-// ─── Error Boundary ────────────────────────────────────────────
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean; error: Error | null }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('ErrorBoundary caught:', error, info);
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{ padding: '2rem', textAlign: 'center', color: '#333' }}>
-          <h2>페이지를 불러오는 중 오류가 발생했습니다.</h2>
-          <p style={{ color: '#999', fontSize: '0.8rem' }}>{this.state.error?.message}</p>
-          <button
-            onClick={() => this.setState({ hasError: false, error: null })}
-            style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer' }}
-          >
-            다시 시도
-          </button>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-// Scroll to top component
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-};
-
-const App: React.FC = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="flex flex-col min-h-screen font-sans text-doldam-dark antialiased selection:bg-doldam-accent selection:text-white">
-        <Navigation />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/country-house" element={<CountryHouse />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/:id" element={<ProjectDetail />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/stone-wall" element={<StoneWall />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
-            
-            {/* 🛠️ [핵심 수정] 모든 형태의 blog 경로를 BlogBoard로 연결합니다 */}
-            <Route path="/blog" element={<BlogBoard />} />
-            <Route path="blog" element={<BlogBoard />} />
-            
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
-            
-            {/* 🛠️ 정의되지 않은 경로는 홈으로 보내 404 에러를 방지합니다 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-        <Footer />
+    <div style={{ 
+      padding: '150px 20px', 
+      textAlign: 'center', 
+      minHeight: '100vh',
+      background: '#f8f9fa' 
+    }}>
+      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#333' }}>
+        🛠️ 블로그 보드 진단 모드
+      </h1>
+      <p style={{ marginTop: '20px', color: '#666' }}>
+        이 화면이 보인다면 라우터 연결은 성공한 것입니다.
+      </p>
+      <div style={{ 
+        marginTop: '30px', 
+        padding: '20px', 
+        border: '1px solid #ddd', 
+        display: 'inline-block',
+        background: '#fff'
+      }}>
+        <p>만약 이 화면은 보이는데 데이터가 없다면,</p>
+        <p><strong>다음 단계는 Firebase 연결 설정 확인입니다.</strong></p>
       </div>
-    </Router>
+    </div>
   );
 };
 
-export default App;
+export default BlogBoard;
