@@ -8,11 +8,13 @@ import { ProjectCategory, NewsCategory } from '../types';
 import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, Eye, Edit2, X, UploadCloud } from 'lucide-react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import ImageResize from 'quill-image-resize-module-react';
 import { useDropzone } from 'react-dropzone';
-
-// Register ImageResize module
-Quill.register('modules/imageResize', ImageResize);
+// ReactQuill과 ImageResize는 브라우저 환경에서만 동작하므로 조건부 렌더링이 중요합니다.
+let ImageResize: any;
+if (typeof window !== 'undefined') {
+  ImageResize = require('quill-image-resize-module-react').default;
+  Quill.register('modules/imageResize', ImageResize);
+}
 
 const Admin: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -580,15 +582,18 @@ const Admin: React.FC = () => {
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><FileText size={12} /> Description (내용)</label>
 
                 <div className="h-96 mb-12">
-                  <ReactQuill
-                    ref={quillRef}
-                    theme="snow"
-                    value={formData.description}
-                    onChange={handleEditorChange}
-                    modules={modules}
-                    formats={formats}
-                    className="h-full bg-white"
-                  />
+                  {typeof window !== 'undefined' && (
+                    <ReactQuill
+                      ref={quillRef}
+                      theme="snow"
+                      value={formData.description}
+                      onChange={handleEditorChange}
+                      modules={modules}
+                      formats={formats}
+                      className="h-full bg-white"
+                      placeholder="내용을 입력하세요..."
+                    />
+                  )}
                 </div>
               </div>
 
