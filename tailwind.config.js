@@ -2,9 +2,8 @@
 export default {
   content: [
     "./index.html",
-    "./*.{js,ts,jsx,tsx}",        /* 루트에 있는 App.tsx, index.tsx 등을 읽음 */
-    "./pages/**/*.{js,ts,jsx,tsx}", /* pages 폴더 안의 파일들을 읽음 */
-    "./components/**/*.{js,ts,jsx,tsx}" /* components 폴더 안의 파일들을 읽음 */
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
