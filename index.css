@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+:root {
+  --doldam-accent: #E85C41; 
+}
+
+body {
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  background-color: #ffffff;
+}

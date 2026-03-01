@@ -20,22 +20,12 @@ import Admin from './pages/Admin';
 import NewsDetail from './pages/NewsDetail';
 import ProjectDetail from './pages/ProjectDetail';
 
-// ─── Error Boundary ────────────────────────────────────────────
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
-  render() {
-    if (this.state.hasError) return <div className="p-8 text-center"><h2>오류가 발생했습니다.</h2></div>;
-    return this.props.children;
-  }
-}
-
+// Scroll to top component
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  React.useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
   return null;
 };
 
@@ -52,16 +42,18 @@ const App: React.FC = () => {
             <Route path="/country-house" element={<CountryHouse />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
+            
             <Route path="/support" element={<Support />} />
             <Route path="/stone-wall" element={<StoneWall />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:id" element={<NewsDetail />} />
+            
             <Route path="/contact" element={<Contact />} />
+
+            {/* Admin Routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
-            {/* [수정] BlogBoard Route를 완전히 삭제했습니다. */}
-            <Route path="*" element={<Home />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
         </main>
         <Footer />
