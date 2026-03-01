@@ -1,10 +1,43 @@
-// App.tsx 수정 (복구본)
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-// ... 기존 import 유지
-import News from './pages/News';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import About from './pages/About';
 import Projects from './pages/Projects';
-// BlogBoard 관련 import는 삭제하세요.
+import Gallery from './pages/Gallery';
+import News from './pages/News';
+import Contact from './pages/Contact';
+import Support from './pages/Support';
+import CountryHouse from './pages/CountryHouse';
+import StoneWall from './pages/StoneWall';
+
+// Admin & Login
+import Login from './pages/Login';
+import Admin from './pages/Admin';
+
+// Detail Pages
+import NewsDetail from './pages/NewsDetail';
+import ProjectDetail from './pages/ProjectDetail';
+
+// ─── Error Boundary ────────────────────────────────────────────
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  render() {
+    if (this.state.hasError) return <div className="p-8 text-center"><h2>오류가 발생했습니다.</h2></div>;
+    return this.props.children;
+  }
+}
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  React.useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
 
 const App: React.FC = () => {
   return (
@@ -15,9 +48,19 @@ const App: React.FC = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/news" element={<News />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/country-house" element={<CountryHouse />} />
             <Route path="/projects" element={<Projects />} />
-            {/* Blog 관련 Route는 삭제하고 기존 뉴스/프로젝트 경로만 유지합니다. */}
+            <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/stone-wall" element={<StoneWall />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
+            {/* Blog 관련 모든 Route를 삭제했습니다. */}
             <Route path="*" element={<Home />} />
           </Routes>
         </main>
@@ -26,3 +69,5 @@ const App: React.FC = () => {
     </Router>
   );
 };
+
+export default App;
