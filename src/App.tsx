@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -54,7 +54,6 @@ class ErrorBoundary extends React.Component<
     return this.props.children;
   }
 }
-// ────────────────────────────────────────────────────────────────
 
 // Scroll to top component
 const ScrollToTop = () => {
@@ -78,25 +77,20 @@ const App: React.FC = () => {
             <Route path="/country-house" element={<CountryHouse />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
-
             <Route path="/support" element={<Support />} />
             <Route path="/stone-wall" element={<StoneWall />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:id" element={<NewsDetail />} />
             
-            {/* [수정 포인트] HashRouter 경로 매칭 강화 */}
+            {/* 이제 /blog 경로가 깔끔하게 매칭됩니다 */}
             <Route path="/blog" element={<BlogBoard />} />
-            <Route path="blog" element={<BlogBoard />} />
-            <Route path="/blog/*" element={<BlogBoard />} />
 
             <Route path="/contact" element={<Contact />} />
-
-            {/* Admin Routes - ErrorBoundary로 감싸서 크래시 방지 */}
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
             
-            {/* 정의되지 않은 모든 경로는 홈으로 리다이렉트 (404 방지) */}
+            {/* 404 방지를 위해 모든 정의되지 않은 경로는 홈으로 보냅니다 */}
             <Route path="*" element={<Home />} />
           </Routes>
         </main>
