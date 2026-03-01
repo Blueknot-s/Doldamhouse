@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doldam House | 돌담하우스</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        background-color: #f8f8f8;
+        color: #1a1a1a;
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      /* Custom Google Map InfoWindow Styles */
+      .gm-style .gm-style-iw-c {
+        padding: 0 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+      }
+      .gm-style .gm-style-iw-d {
+        overflow: hidden !important;
+        padding: 0 !important;
+        max-height: none !important;
+      }
+      .gm-style .gm-style-iw-t::after {
+        display: none !important; /* Remove the arrow tail for cleaner look */
+      }
+      .gm-ui-hover-effect {
+        display: none !important; /* Hide default close button */
+      }
+    </style>
+    <!-- Google Maps API -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHW1U7o1mur0v6SiEyxAg9XoAvmQLiV9s&libraries=places,marker"></script>
+    <!-- Marker Clusterer -->
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.59/build/spline-viewer.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>
