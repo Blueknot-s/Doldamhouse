@@ -1,20 +1,14 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp, getDocs, doc, deleteDoc, updateDoc, query, orderBy } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db, storage } from "../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ProjectCategory, NewsCategory } from '../types';
-import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, Eye, Edit2, X, UploadCloud } from 'lucide-react';
-import ReactQuill, { Quill } from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, X, UploadCloud } from 'lucide-react';
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 import { useDropzone } from 'react-dropzone';
-// ReactQuill과 ImageResize는 브라우저 환경에서만 동작하므로 조건부 렌더링이 중요합니다.
-let ImageResize: any;
-if (typeof window !== 'undefined') {
-  ImageResize = require('quill-image-resize-module-react').default;
-  Quill.register('modules/imageResize', ImageResize);
-}
 
 const Admin: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -23,7 +17,6 @@ const Admin: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<any[]>([]);
   const navigate = useNavigate();
-  const quillRef = useRef<ReactQuill>(null);
 
   // Form States
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -37,63 +30,28 @@ const Admin: React.FC = () => {
     images: [] as string[], // For gallery multi-image upload
   });
 
-  // Quill Modules & Formats
-  const modules = useMemo(() => ({
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, 4, false] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-        ['link', 'image'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'align': [] }],
-        ['clean']
-      ],
-      handlers: {
-        image: imageHandler
-      }
-    },
-    imageResize: {
-      parchment: Quill.import('parchment'),
-      modules: ['Resize', 'DisplaySize']
-    }
-  }), []);
 
-  const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'image',
-    'color', 'background',
-    'align'
-  ];
-
-  // Image Handler for Quill
-  function imageHandler() {
+  // Image upload handler
+  const imageHandler = useCallback(async () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
     input.click();
-
     input.onchange = async () => {
       const file = input.files ? input.files[0] : null;
       if (!file) return;
-
       const storageRef = ref(storage, `editor/${Date.now()}_${file.name}`);
       try {
         const snapshot = await uploadBytes(storageRef, file);
         const url = await getDownloadURL(snapshot.ref);
-        const quill = quillRef.current?.getEditor();
-        const range = quill?.getSelection();
-        if (quill && range) {
-          quill.insertEmbed(range.index, 'image', url);
-        }
+        // MDEditor: insert markdown image syntax
+        setFormData(prev => ({ ...prev, description: prev.description + `\n![image](${url})` }));
       } catch (error) {
-        console.error("Image upload failed:", error);
-        alert("이미지 업로드에 실패했습니다.");
+        console.error('Image upload failed:', error);
+        alert('이미지 업로드에 실패했습니다.');
       }
     };
-  }
+  }, []);
 
   // Gallery Multi-Image Upload Handler
   const handleGalleryUpload = async (files: File[]) => {
@@ -577,23 +535,26 @@ const Admin: React.FC = () => {
                 </div>
               </div>
 
-              {/* Rich Text Editor */}
+              {/* Markdown Editor */}
               <div className="space-y-3 mb-10">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><FileText size={12} /> Description (내용)</label>
-
-                <div className="h-96 mb-12">
-                  {typeof window !== 'undefined' && (
-                    <ReactQuill
-                      ref={quillRef}
-                      theme="snow"
-                      value={formData.description}
-                      onChange={handleEditorChange}
-                      modules={modules}
-                      formats={formats}
-                      className="h-full bg-white"
-                      placeholder="내용을 입력하세요..."
-                    />
-                  )}
+                <div className="flex justify-end mb-1">
+                  <button
+                    type="button"
+                    onClick={imageHandler}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-doldam-accent text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-black transition-all"
+                  >
+                    <ImageIcon size={12} /> 이미지 삽입
+                  </button>
+                </div>
+                <div data-color-mode="light">
+                  <MDEditor
+                    value={formData.description}
+                    onChange={(val) => handleEditorChange(val || '')}
+                    height={400}
+                    preview="edit"
+                    style={{ borderRadius: '2px' }}
+                  />
                 </div>
               </div>
 
@@ -621,5 +582,4 @@ const Admin: React.FC = () => {
     </div>
   );
 };
-
 export default Admin;
