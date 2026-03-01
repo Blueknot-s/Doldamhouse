@@ -11,6 +11,7 @@ import Contact from './pages/Contact';
 import Support from './pages/Support';
 import CountryHouse from './pages/CountryHouse';
 import StoneWall from './pages/StoneWall';
+import BlogBoard from './pages/BlogBoard';
 
 // Admin & Login
 import Login from './pages/Login';
@@ -83,6 +84,7 @@ const App: React.FC = () => {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/blog" element={<BlogBoard />} />
 
             <Route path="/contact" element={<Contact />} />
 
