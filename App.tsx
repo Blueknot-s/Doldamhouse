@@ -43,7 +43,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen font-sans text-doldam-dark antialiased">
+      <div className="flex flex-col min-h-screen font-sans text-doldam-dark antialiased selection:bg-doldam-accent selection:text-white">
         <Navigation />
         <main className="flex-grow">
           <Routes>
@@ -60,7 +60,7 @@ const App: React.FC = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
-            {/* Blog 관련 모든 Route를 삭제했습니다. */}
+            {/* [수정] BlogBoard Route를 완전히 삭제했습니다. */}
             <Route path="*" element={<Home />} />
           </Routes>
         </main>
