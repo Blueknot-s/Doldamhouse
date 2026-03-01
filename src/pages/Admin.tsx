@@ -94,19 +94,37 @@ const Admin: React.FC = () => {
 
   // Gallery Multi-Image Upload Handler
   const handleGalleryUpload = async (files: File[]) => {
-    const newImages: string[] = [];
+    if (files.length === 0) return;
+
     setLoading(true);
-    try {
-      for (const file of files) {
+    const uploadPromises = files.map(async (file) => {
+      try {
         const storageRef = ref(storage, `${activeTab}/${Date.now()}_${file.name}`);
         const snapshot = await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(snapshot.ref);
-        newImages.push(url);
+        return await getDownloadURL(snapshot.ref);
+      } catch (err) {
+        console.error(`Upload failed for ${file.name}:`, err);
+        return null;
       }
-      setFormData(prev => ({ ...prev, images: [...prev.images, ...newImages] }));
+    });
+
+    try {
+      const urls = await Promise.all(uploadPromises);
+      const validUrls = urls.filter((url): url is string => url !== null);
+
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...validUrls],
+        // If it's the first image, set it as the main preview
+        imageUrl: prev.imageUrl || validUrls[0] || ''
+      }));
+
+      if (validUrls.length < files.length) {
+        alert(`${files.length - validUrls.length}개의 이미지 업로드에 실패했습니다.`);
+      }
     } catch (error) {
-      console.error("Gallery upload failed:", error);
-      alert("이미지 업로드에 실패했습니다.");
+      console.error("Gallery upload process error:", error);
+      alert("이미지 처리 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
@@ -492,16 +510,25 @@ const Admin: React.FC = () => {
                 <div
                   onDrop={onDrop}
                   onDragOver={onDragOver}
-                  className="w-full p-12 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50 hover:bg-white hover:border-doldam-accent transition-all flex flex-col items-center justify-center cursor-pointer group"
+                  className="w-full p-12 border-2 border-dashed border-gray-200 rounded-sm bg-gray-50 hover:bg-white hover:border-doldam-accent transition-all flex flex-col items-center justify-center cursor-pointer group relative overflow-hidden"
                   onClick={() => document.getElementById('fileInput')?.click()}
                 >
+                  {loading && (
+                    <div className="absolute inset-0 bg-white/80 z-10 flex items-center justify-center flex-col">
+                      <div className="w-8 h-8 border-4 border-doldam-accent border-t-transparent rounded-full animate-spin mb-4"></div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-doldam-dark">Uploading Images...</p>
+                    </div>
+                  )}
                   <ImageIcon size={48} className="text-gray-300 group-hover:text-doldam-accent mb-4 transition-colors" />
-                  <p className="text-sm font-bold text-gray-400 group-hover:text-black">이미지를 여기로 드래그하거나 클릭하여 선택하세요</p>
-                  <p className="text-[10px] text-gray-400 mt-2 uppercase tracking-widest">Supports JPG, PNG, WEBP</p>
+                  <p className="text-sm font-black text-gray-500 group-hover:text-doldam-dark text-center">
+                    이미지를 여기로 드래그하거나 클릭하여 선택하세요 (다중 선택 가능)
+                  </p>
+                  <p className="text-[10px] text-gray-400 mt-3 uppercase tracking-[0.2em] font-bold">Max 5MB per image • JPG, PNG, WEBP</p>
                   <input
                     id="fileInput"
                     type="file"
                     multiple
+                    accept="image/*"
                     onChange={onFileChange}
                     className="hidden"
                   />
