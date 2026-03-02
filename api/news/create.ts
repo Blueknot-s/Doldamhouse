@@ -81,7 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const authHeader = req.headers['authorization'] || '';
     const expectedToken =
-      process.env.N8N_API_SECRET || 'doldamhouse-secret-2026';
+      process.env.N8N_API_SECRET || 'doldamhouse-news-secret-2026';
 
     if (authHeader !== `Bearer ${expectedToken}`) {
       return res.status(401).json({
