@@ -25,5 +25,23 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "include": [
+    "*.tsx",
+    "*.ts",
+    "components/**/*.tsx",
+    "components/**/*.ts",
+    "pages/**/*.tsx",
+    "pages/**/*.ts",
+    "constants.ts",
+    "types.ts",
+    "firebase.ts",
+    "react-quill.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src",
+    "api",
+    "dist"
+  ]
 }
