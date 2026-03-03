@@ -5,13 +5,10 @@ import * as Auth from "firebase/auth";
 import { auth, db, storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ProjectCategory, NewsCategory } from '../types';
-import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, Eye, Edit2, X } from 'lucide-react';
-import ReactQuill, { Quill } from 'react-quill-new';
+import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import ImageResize from 'quill-image-resize-module-react';
 
 // Register ImageResize module
-Quill.register('modules/imageResize', ImageResize);
 
 const Admin: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -50,16 +47,13 @@ const Admin: React.FC = () => {
         image: imageHandler
       }
     },
-    imageResize: {
-      parchment: Quill.import('parchment'),
-      modules: ['Resize', 'DisplaySize']
-    }
+    
   }), []);
 
   const formats = [
     'header',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
+    'list', 'indent',
     'link', 'image',
     'color', 'background',
     'align'
