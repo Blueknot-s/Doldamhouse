@@ -86,14 +86,20 @@ const News: React.FC = () => {
                     </h3>
                     
                     <p className="text-gray-500 line-clamp-2 leading-relaxed font-light text-base md:text-lg">
-                      {item.description || item.content || item.summary}
+                     {(item.summary || item.content || item.description || '')
+  .replace(/<[^>]*>?/gm, '')
+  .replace(/&nbsp;/g, ' ')
+  .replace(/&amp;/g, '&')
+  .replace(/\s{2,}/g, ' ')
+  .trim()
+  .slice(0, 120)}
                     </p>
                   </div>
 
                   {(item.images?.[0] || item.imageUrl) && (
                     <div className="w-full md:w-48 aspect-video md:aspect-square overflow-hidden bg-gray-100 grayscale group-hover:grayscale-0 transition-all duration-700">
                       <img 
-                        src={item.images?.[0] || item.imageUrl} 
+                        src={item.imageUrl || item.images?.[0] || item.thumbnail} 
                         alt="News Thumb" 
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" 
                       />
