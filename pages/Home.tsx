@@ -226,7 +226,12 @@ const Home: React.FC = () => {
                       </div>
                       <h4 className="text-xl font-bold group-hover:text-gray-500 transition-colors mb-3 tracking-tighter leading-tight">{item.title}</h4>
                       <p className="text-sm text-gray-400 line-clamp-1 font-light">
-                        {(item.content || item.summary || "").replace(/<[^>]*>?/gm, '')}
+                       {(item.content || item.summary || "")
+  .replace(/<[^>]*>?/gm, '')
+  .replace(/&nbsp;/g, ' ')
+  .replace(/&amp;/g, '&')
+  .replace(/\s{2,}/g, ' ')
+  .trim()}
                       </p>
                     </Link>
                   ))}
