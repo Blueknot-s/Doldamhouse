@@ -96,7 +96,7 @@ const NewsDetail: React.FC = () => {
         </header>
 
         {/* 이미지 갤러리 */}
-        {images.length > 0 && (
+        {images.length > 1 && (
           <div className="mb-12 space-y-3">
             <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-50 group shadow-md rounded-sm">
               <img
