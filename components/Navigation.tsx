@@ -83,7 +83,7 @@ const Navigation: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="text-2xl font-black tracking-tighter flex items-center group relative z-[310]">
             <span className="transition-transform group-hover:text-doldam-accent duration-300">Doldam</span>
-            <span className="text-doldam-accent mx-0.5">.</span>
+            <span className="text-red-600 mx-0.5">.</span>
             <span className="transition-transform group-hover:text-doldam-accent duration-300">House</span>
           </Link>
 

@@ -5,11 +5,13 @@ import * as Auth from "firebase/auth";
 import { auth, db, storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ProjectCategory, NewsCategory } from '../types';
-import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, X } from 'lucide-react';
-import ReactQuill from 'react-quill-new';
+import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, Eye, Edit2, X } from 'lucide-react';
+import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import ImageResize from 'quill-image-resize-module-react';
 
 // Register ImageResize module
+Quill.register('modules/imageResize', ImageResize);
 
 const Admin: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -48,13 +50,16 @@ const Admin: React.FC = () => {
         image: imageHandler
       }
     },
-    
+    imageResize: {
+      parchment: Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize']
+    }
   }), []);
 
   const formats = [
     'header',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'indent',
+    'list', 'bullet', 'indent',
     'link', 'image',
     'color', 'background',
     'align'
@@ -427,7 +432,7 @@ const Admin: React.FC = () => {
                       name="category" 
                       value={formData.category} 
                       onChange={handleInputChange} 
-                      className="w-full p-4 border border-gray-200 rounded-sm focus:border-doldam-accent focus:outline-none bg-gray-50 focus:bg-white cursor-pointer font-bold" 
+                      className="w-full p-4 border border-gray-200 rounded-sm focus:border-doldam-accent focus:outline-none bg-gray-50 focus:bg-white cursor-pointer font-bold text-gray-900" 
                       required
                     >
                       <option value="">카테고리 선택</option>

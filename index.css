@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
-:root {
-  --doldam-accent: #E85C41; 
+@theme {
+  --color-doldam-accent: #E85C41;
+  --color-doldam-dark: #1a1a1a;
 }
 
 body {

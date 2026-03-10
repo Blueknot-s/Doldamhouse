@@ -102,7 +102,10 @@ const Home: React.FC = () => {
         {/* 하단 브랜드 정보 (원본 그대로 유지) */}
         <div className="absolute bottom-10 left-6 md:left-20 z-10 text-white pointer-events-none">
           <p className="text-sm md:text-base font-bold tracking-widest uppercase mb-2 text-doldam-accent">Jeju Stone House Architecture</p>
-          <h2 className="text-4xl md:text-6xl font-bold tracking-tighter leading-none uppercase">Doldam<br/>House</h2>
+          <h2 className="text-4xl md:text-6xl font-bold leading-none uppercase flex flex-col">
+            <span className="tracking-tighter">DOLDAM</span>
+            <span className="tracking-[0.18em]">HOUSE</span>
+          </h2>
         </div>
       </section>
 
@@ -113,7 +116,7 @@ const Home: React.FC = () => {
             key={section.id}
             className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
           >
-              <img src={section.img} alt={section.title} className="w-full h-full object-cover brightness-50" />
+              <img src={section.img} alt={section.title} className="w-full h-full object-cover brightness-50" loading="lazy" />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-6">
                   <span className="text-doldam-accent tracking-widest uppercase mb-4 font-bold">{section.subtitle}</span>
                   <h2 className="text-4xl md:text-6xl font-bold mb-6 max-w-4xl tracking-tighter">{section.title}</h2>
@@ -171,6 +174,7 @@ const Home: React.FC = () => {
                       src={project.images?.[0] || project.imageUrl || "https://picsum.photos/seed/doldam/1200/800"} 
                       alt={project.title} 
                       className="object-cover w-full h-full transform transition-transform duration-1000 group-hover:scale-110" 
+                      loading="lazy"
                     />
                   </div>
                   <div className="text-[10px] font-bold text-doldam-accent mb-3 uppercase tracking-widest">{project.category}</div>
@@ -200,6 +204,7 @@ const Home: React.FC = () => {
                           src={realNews[0].images?.[0] || realNews[0].imageUrl || "https://picsum.photos/1200/800"} 
                           alt="News Headline" 
                           className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-105" 
+                          loading="lazy"
                         />
                       </div>
                       <div className="flex items-center gap-4 mb-4">
@@ -208,12 +213,7 @@ const Home: React.FC = () => {
                       </div>
                       <h4 className="text-3xl font-bold mb-4 group-hover:text-doldam-accent transition-colors leading-tight tracking-tighter">{realNews[0].title}</h4>
                       <p className="text-gray-500 line-clamp-2 leading-relaxed font-light">
-                        {(realNews[0].summary || realNews[0].content || "")
-  .replace(/<[^>]*>?/gm, '')
-  .replace(/&nbsp;/g, ' ')
-  .replace(/&amp;/g, '&')
-  .replace(/\s{2,}/g, ' ')
-  .trim()}
+                        {(realNews[0].content || realNews[0].summary || "").replace(/<[^>]*>?/gm, '')}
                       </p>
                     </Link>
                 )}
@@ -226,12 +226,7 @@ const Home: React.FC = () => {
                       </div>
                       <h4 className="text-xl font-bold group-hover:text-gray-500 transition-colors mb-3 tracking-tighter leading-tight">{item.title}</h4>
                       <p className="text-sm text-gray-400 line-clamp-1 font-light">
-                       {(item.content || item.summary || "")
-  .replace(/<[^>]*>?/gm, '')
-  .replace(/&nbsp;/g, ' ')
-  .replace(/&amp;/g, '&')
-  .replace(/\s{2,}/g, ' ')
-  .trim()}
+                        {(item.content || item.summary || "").replace(/<[^>]*>?/gm, '')}
                       </p>
                     </Link>
                   ))}
