@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
-import { ImageIcon } from 'lucide-react';
+import { ImageIcon, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Gallery: React.FC = () => {
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Modal states
+  const [selectedGallery, setSelectedGallery] = useState<any>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
   // 1. Firebase에서 실시간 갤러리 데이터 불러오기
   useEffect(() => {
@@ -24,8 +28,48 @@ const Gallery: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (selectedGallery) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedGallery]);
+
+  const openModal = (img: any) => {
+    setSelectedGallery(img);
+    setCurrentImageIndex(0);
+  };
+
+  const closeModal = () => {
+    setSelectedGallery(null);
+    setCurrentImageIndex(0);
+  };
+
+  const getImagesArray = (item: any) => {
+    if (item?.images && item.images.length > 0) return item.images;
+    if (item?.imageUrl) return [item.imageUrl];
+    return ["https://picsum.photos/seed/doldam/800/1000"];
+  };
+
+  const galleryImages = getImagesArray(selectedGallery);
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
+
   return (
-    <div className="w-full pt-20 bg-white min-h-screen">
+    <div className="w-full pt-20 bg-white min-h-screen relative">
       <div className="container mx-auto px-6 py-12">
         <div className="mb-16">
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">
@@ -42,7 +86,11 @@ const Gallery: React.FC = () => {
           <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
             {images.length > 0 ? (
               images.map((img) => (
-                <div key={img.id} className="break-inside-avoid group relative overflow-hidden bg-gray-50 shadow-sm hover:shadow-2xl transition-all duration-500">
+                <div 
+                  key={img.id} 
+                  onClick={() => openModal(img)}
+                  className="break-inside-avoid group relative overflow-hidden bg-gray-50 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
+                >
                   {/* 다중 이미지 배열(images) 또는 단일 이미지(imageUrl) 대응 */}
                   <img 
                     src={img.images?.[0] || img.imageUrl || "https://picsum.photos/seed/doldam/800/1000"} 
@@ -54,6 +102,9 @@ const Gallery: React.FC = () => {
                   <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
                     <p className="text-white text-lg font-bold tracking-[0.2em] uppercase mb-2">{img.title}</p>
                     <div className="w-8 h-[1px] bg-doldam-accent mb-4"></div>
+                    {img.images && img.images.length > 1 && (
+                      <p className="text-doldam-accent text-xs font-bold tracking-widest mb-4">+{img.images.length - 1} PHOTOS</p>
+                    )}
                     {img.description && (
                       <div className="text-gray-300 text-sm line-clamp-4 prose prose-invert prose-sm" dangerouslySetInnerHTML={{ __html: img.description }} />
                     )}
@@ -69,6 +120,66 @@ const Gallery: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Image Popup Modal */}
+      {selectedGallery && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 md:p-10 animate-fadeIn"
+          onClick={closeModal}
+        >
+          <button 
+            onClick={closeModal}
+            className="absolute top-4 right-4 md:top-8 md:right-8 flex items-center gap-2 text-white bg-white/10 hover:bg-doldam-accent rounded-full px-4 py-2 transition-all z-[60] backdrop-blur-md border border-white/20 shadow-lg"
+          >
+            <span className="text-xs font-bold tracking-widest uppercase hidden md:block">Close</span>
+            <X size={20} />
+          </button>
+
+          <div 
+            className="relative w-full max-w-6xl max-h-full flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Main Image */}
+            <div className="relative w-full flex items-center justify-center h-[70vh] md:h-[80vh]">
+              <img 
+                src={galleryImages[currentImageIndex]} 
+                alt={`${selectedGallery.title} - ${currentImageIndex + 1}`}
+                className="max-w-full max-h-full object-contain shadow-2xl"
+              />
+
+              {/* Navigation Arrows (only if multiple images) */}
+              {galleryImages.length > 1 && (
+                <>
+                  <button 
+                    onClick={prevImage}
+                    className="absolute left-4 md:left-8 p-3 bg-black/50 hover:bg-doldam-accent text-white rounded-full backdrop-blur-md transition-all border border-white/10 hover:border-transparent"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button 
+                    onClick={nextImage}
+                    className="absolute right-4 md:right-8 p-3 bg-black/50 hover:bg-doldam-accent text-white rounded-full backdrop-blur-md transition-all border border-white/10 hover:border-transparent"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Title & Counter */}
+            <div className="mt-6 text-center">
+              <h3 className="text-white text-xl md:text-2xl font-bold tracking-widest uppercase mb-2">
+                {selectedGallery.title}
+              </h3>
+              {galleryImages.length > 1 && (
+                <p className="text-gray-400 text-sm font-mono tracking-widest">
+                  {currentImageIndex + 1} / {galleryImages.length}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
