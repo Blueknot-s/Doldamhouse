@@ -8,10 +8,10 @@ import { ProjectCategory, NewsCategory } from '../types';
 import { LogOut, Trash2, Edit3, Plus, Search, Image as ImageIcon, MapPin, Tag, FileText, Calendar, LayoutGrid, ArrowLeft, Eye, Edit2, X } from 'lucide-react';
 import ReactQuill, { Quill } from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import ImageResize from 'quill-image-resize-module-react';
 
-// Register ImageResize module
-Quill.register('modules/imageResize', ImageResize);
+// Removed ImageResize module as it causes crashes with React 19 / Quill v2
+// import ImageResize from 'quill-image-resize-module-react';
+// Quill.register('modules/imageResize', ImageResize);
 
 const Admin: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -49,11 +49,8 @@ const Admin: React.FC = () => {
       handlers: {
         image: imageHandler
       }
-    },
-    imageResize: {
-      parchment: Quill.import('parchment'),
-      modules: ['Resize', 'DisplaySize']
     }
+    // Removed imageResize config
   }), []);
 
   const formats = [
