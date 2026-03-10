@@ -129,10 +129,10 @@ const Gallery: React.FC = () => {
         >
           <button 
             onClick={closeModal}
-            className="absolute top-4 right-4 md:top-8 md:right-8 flex items-center gap-2 text-white bg-white/10 hover:bg-doldam-accent rounded-full px-4 py-2 transition-all z-[60] backdrop-blur-md border border-white/20 shadow-lg"
+            className="fixed top-24 right-4 md:top-32 md:right-16 flex items-center gap-3 text-white bg-black/80 hover:bg-doldam-accent rounded-full px-6 py-3 transition-all z-[9999] backdrop-blur-md border-2 border-white/30 shadow-[0_0_30px_rgba(0,0,0,0.5)] cursor-pointer"
           >
-            <span className="text-xs font-bold tracking-widest uppercase hidden md:block">Close</span>
-            <X size={20} />
+            <span className="text-sm font-bold tracking-widest uppercase">Close</span>
+            <X size={24} />
           </button>
 
           <div 
