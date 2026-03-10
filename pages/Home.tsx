@@ -213,7 +213,7 @@ const Home: React.FC = () => {
                       </div>
                       <h4 className="text-3xl font-bold mb-4 group-hover:text-doldam-accent transition-colors leading-tight tracking-tighter">{realNews[0].title}</h4>
                       <p className="text-gray-500 line-clamp-2 leading-relaxed font-light">
-                        {(realNews[0].content || realNews[0].summary || "").replace(/<[^>]*>?/gm, '')}
+                        {String(realNews[0].content || realNews[0].summary || "").replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
                       </p>
                     </Link>
                 )}
@@ -226,7 +226,7 @@ const Home: React.FC = () => {
                       </div>
                       <h4 className="text-xl font-bold group-hover:text-gray-500 transition-colors mb-3 tracking-tighter leading-tight">{item.title}</h4>
                       <p className="text-sm text-gray-400 line-clamp-1 font-light">
-                        {(item.content || item.summary || "").replace(/<[^>]*>?/gm, '')}
+                        {String(item.content || item.summary || "").replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
                       </p>
                     </Link>
                   ))}

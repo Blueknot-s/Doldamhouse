@@ -86,7 +86,7 @@ const News: React.FC = () => {
                     </h3>
                     
                     <p className="text-gray-500 line-clamp-2 leading-relaxed font-light text-base md:text-lg">
-                      {item.description || item.content || item.summary}
+                      {String(item.description || item.content || item.summary || "").replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ')}
                     </p>
                   </div>
 
